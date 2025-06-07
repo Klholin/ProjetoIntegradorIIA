@@ -1,8 +1,6 @@
 package com.universidade;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ConexaoBanco {
@@ -16,7 +14,7 @@ public class ConexaoBanco {
 		this.senha = senha;
 		this.nomeUsuario = nomeUsuario;
 	}
-	
+
 	public ConexaoBanco() {
 		
 	}
@@ -44,6 +42,14 @@ public class ConexaoBanco {
 	public void setNomeUsuario(String nomeUsuario) {
 		this.nomeUsuario = nomeUsuario;
 	}
+
+	public Connection getConexao() {
+		return conexao;
+	}
+
+	public void setConexao(Connection conexao) {
+		this.conexao = conexao;
+	}
 	
 	public void conectar () {
 		this.conexao = null;
@@ -65,55 +71,5 @@ public class ConexaoBanco {
 		this.conexao = null;
 		}else{System.out.println("Não há conexão para ser encerrada");}
 	}
-	
-	public int consultar(int codigo) {
-		int codigoProd;
-		String descricaoProd;
-		double valor_Unitario;
-		try {
-			ResultSet rsProduto = conexao.createStatement().executeQuery ("SELECT * FROM tab_dados_produtos WHERE codigo = "+codigo);
-			if(rsProduto.next()) {
-			codigoProd  = rsProduto.getInt("codigo");
-			descricaoProd  = rsProduto.getString("descricao");
-			valor_Unitario  = rsProduto.getDouble("valor_unitario");	
-			System.out.println("Codigo:"+codigoProd+"\nDescrição:"+descricaoProd+"\nValor:"+valor_Unitario);				
-			}else{
-				System.out.println("O produto informado não existe");
-			}
-			}catch(SQLException e){
-			System.out.println("Erro ao tentar acessar o banco de dados: " + e.getMessage());}
-		return 0;
-		}
-	
-	public int inserir(int codigoProd,String descricaoProd,double valor_unitario) {	
-		int resultadoOp = -1 ;
-		String mensQuery = "INSERT INTO tab_dados_produtos (codigo,descricao,valor_unitario) VALUES (?, ?, ?);";
-		try {
-			PreparedStatement pst = conexao.prepareStatement(mensQuery);
-			pst.setInt(1,codigoProd);
-			pst.setString(2,descricaoProd);
-			pst.setDouble(3,valor_unitario);
-			resultadoOp = pst.executeUpdate();
-			pst.close();
-		}catch(SQLException e) {
-			System.out.println("Erro ao realizar operação: "+ e.getMessage());
-		}
-		return resultadoOp;
-	}
-	
-	public int update(int codigoProd,String descricaoProd,double valor_unitario) {	
-		int resultadoOp = -1 ;
-		String mensQuery = "UPDATE tab_dados_produtos SET descricao = ?, valor_unitario = ? WHERE codigo = ?";
-		try {
-			PreparedStatement pst = conexao.prepareStatement(mensQuery);
-			pst.setString(1,descricaoProd);
-			pst.setDouble(2,valor_unitario);
-			pst.setInt(3,codigoProd); // parâmetro do where, o último ?
-			resultadoOp = pst.executeUpdate();
-			pst.close();
-		}catch(SQLException e) {
-			System.out.println("Erro ao realizar operação: "+ e.getMessage());
-		}
-		return resultadoOp;
-	}
+
 }
